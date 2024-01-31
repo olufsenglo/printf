@@ -25,6 +25,25 @@ char *str = va_arg(args, char *);
 }
 
 /**
+* print_integer - Helper function to print an integer.
+* @count: Pointer to the count of characters printed.
+* @args: Variable argument list.
+*/
+static void print_integer(int *count, va_list args)
+{
+int num = va_arg(args, int);
+// Assuming a reasonable buffer size for simplicity
+char buffer[12];  // Buffer for integer to string conversion
+int length = 0;
+
+// Convert integer to string
+length = sprintf(buffer, "%d", num);
+
+// Write the string to standard output
+*count += write(1, buffer, length);
+}
+
+/**
 * _printf - Custom printf function.
 * @format: Format string.
 *
@@ -49,6 +68,10 @@ print_char(&count, args);
 break;
 case 's':
 print_string(&count, args);
+break;
+case 'd':
+case 'i':
+print_integer(&count, args);
 break;
 case '%':
 count += write(1, "%", 1);
