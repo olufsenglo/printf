@@ -31,15 +31,29 @@ char *str = va_arg(args, char *);
 */
 static void print_integer(int *count, va_list args)
 {
+int i;
 int num = va_arg(args, int);
-/* Assuming a reasonable buffer size for simplicity */
-char buffer[12];  /* Buffer for integer to string conversion */
 int length = 0;
+char buffer[12];
 
-/* Convert integer to string */
-length = sprintf(buffer, "%d", num);
+if (num < 0)
+{
+*count += write(1, "-", 1);
+num = -num;
+}
 
-/* Write the string to standard output */
+do {
+buffer[length++] = num % 10 + '0';
+num /= 10;
+} while (num != 0);
+
+for (i = 0; i < length / 2; i++)
+{
+char temp = buffer[i];
+buffer[i] = buffer[length - i - 1];
+buffer[length - i - 1] = temp;
+}
+
 *count += write(1, buffer, length);
 }
 
