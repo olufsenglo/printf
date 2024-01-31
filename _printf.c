@@ -124,5 +124,5 @@ format++;
 
 va_end(args);
 
-return count;
+return (count);
 }
