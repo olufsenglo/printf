@@ -14,46 +14,53 @@ char c = va_arg(args, int);
 }
 
 /**
- * print_string - Helper function to print a string.
- * @count: Pointer to the count of characters printed.
- * @args: Variable argument list.
- */
+* print_string - Helper function to print a string.
+* @count: Pointer to the count of characters printed.
+* @args: Variable argument list.
+*/
 static void print_string(int *count, va_list args)
 {
 char *str = va_arg(args, char *);
+int i = 0;
 
-if (str == NULL)
-str = "(null)";
-
-while (*str)
+while (str[i])
 {
-*count += write(1, str, 1);
-str++;
+*count += write(1, &str[i], 1);
+i++;
 }
 }
 
 /**
-* print_integer - Helper function to print an integer.
-* @count: Pointer to the count of characters printed.
-* @args: Variable argument list.
-*/
+ * print_integer - Helper function to print an integer.
+ * @count: Pointer to the count of characters printed.
+ * @args: Variable argument list.
+ */
 static void print_integer(int *count, va_list args)
 {
-int i;
-int num = va_arg(args, int);
-int length = 0;
+int i, is_negative = 0, length;
+unsigned int num;
 char buffer[12];
 
-if (num < 0)
+is_negative = 0;
+num = va_arg(args, unsigned int);
+
+if (num == 0)
 {
-*count += write(1, "-", 1);
-num = -num;
+*count += write(1, "0", 1);
+return;
 }
+
+length = 0;
 
 do {
 buffer[length++] = num % 10 + '0';
 num /= 10;
 } while (num != 0);
+
+if (is_negative)
+{
+buffer[length++] = '-';
+}
 
 for (i = 0; i < length / 2; i++)
 {
@@ -66,31 +73,35 @@ buffer[length - i - 1] = temp;
 }
 
 /**
-* print_binary - Helper function to print an unsigned integer in binary.
+* handle_conversion - Helper function to handle conversion specifiers.
 * @count: Pointer to the count of characters printed.
 * @args: Variable argument list.
+* @specifier: Conversion specifier.
 */
-static void print_binary(int *count, va_list args)
+static void handle_conversion(int *count, va_list args, char specifier)
 {
-unsigned int num = va_arg(args, unsigned int);
-int binary[32];
-int i = 0;
-
-if (num == 0)
+switch (specifier)
 {
-*count += write(1, "0", 1);
-return;
-}
-
-while (num > 0)
-{
-binary[i++] = num % 2;
-num /= 2;
-}
-
-for (i = i - 1; i >= 0; i--)
-{
-*count += write(1, &binary[i] + '0', 1);
+case 'c':
+print_char(count, args);
+break;
+case 's':
+print_string(count, args);
+break;
+case 'd':
+case 'i':
+case 'u':
+case 'o':
+case 'x':
+case 'X':
+print_integer(count, args);
+break;
+case '%':
+*count += write(1, "%", 1);
+break;
+default:
+*count += write(1, "%", 1);
+*count += write(1, &specifier, 1);
 }
 }
 
@@ -112,28 +123,7 @@ while (*format)
 if (*format == '%' && *(format + 1) != '\0')
 {
 format++;
-switch (*format)
-{
-case 'c':
-print_char(&count, args);
-break;
-case 's':
-print_string(&count, args);
-break;
-case 'd':
-case 'i':
-print_integer(&count, args);
-break;
-case 'b':
-print_binary(&count, args);
-break;
-case '%':
-count += write(1, "%", 1);
-break;
-default:
-count += write(1, "%", 1);
-count += write(1, format, 1);
-}
+handle_conversion(&count, args, *format);
 }
 else
 {
