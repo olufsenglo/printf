@@ -14,14 +14,22 @@ char c = va_arg(args, int);
 }
 
 /**
-* print_string - Helper function to print a string.
-* @count: Pointer to the count of characters printed.
-* @args: Variable argument list.
-*/
+ * print_string - Helper function to print a string.
+ * @count: Pointer to the count of characters printed.
+ * @args: Variable argument list.
+ */
 static void print_string(int *count, va_list args)
 {
 char *str = va_arg(args, char *);
+
+if (str == NULL)
+str = "(null)";
+
+while (*str)
+{
 *count += write(1, str, 1);
+str++;
+}
 }
 
 /**
