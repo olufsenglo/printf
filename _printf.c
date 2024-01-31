@@ -3,11 +3,10 @@
 #include <unistd.h>
 
 /**
- * print_char - Helper function to print a character.
- *
- * @count: Pointer to the count of characters printed.
- * @args: Variable argument list.
- */
+* print_char - Helper function to print a character.
+* @count: Pointer to the count of characters printed.
+* @args: Variable argument list.
+*/
 static void print_char(int *count, va_list args)
 {
 char c = va_arg(args, int);
@@ -15,10 +14,10 @@ char c = va_arg(args, int);
 }
 
 /**
- * print_string - Helper function to print a string.
- * @count: Pointer to the count of characters printed.
- * @args: Variable argument list.
- */
+* print_string - Helper function to print a string.
+* @count: Pointer to the count of characters printed.
+* @args: Variable argument list.
+*/
 static void print_string(int *count, va_list args)
 {
 char *str = va_arg(args, char *);
@@ -26,11 +25,11 @@ char *str = va_arg(args, char *);
 }
 
 /**
- * _printf - Custom printf function.
- * @format: Format string.
- *
- * Return: Number of characters printed (excluding null byte).
- */
+* _printf - Custom printf function.
+* @format: Format string.
+*
+* Return: Number of characters printed (excluding null byte).
+*/
 int _printf(const char *format, ...)
 {
 int count = 0;
