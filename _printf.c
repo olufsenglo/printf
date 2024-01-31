@@ -31,36 +31,27 @@ i++;
 }
 
 /**
- * print_integer - Helper function to print an integer.
- * @count: Pointer to the count of characters printed.
- * @args: Variable argument list.
- */
+* print_integer - Helper function to print an integer.
+* @count: Pointer to the count of characters printed.
+* @args: Variable argument list.
+*/
 static void print_integer(int *count, va_list args)
 {
-int i, is_negative = 0, length;
-unsigned int num;
+int i;
+int num = va_arg(args, int);
+int length = 0;
 char buffer[12];
 
-is_negative = 0;
-num = va_arg(args, unsigned int);
-
-if (num == 0)
+if (num < 0)
 {
-*count += write(1, "0", 1);
-return;
+*count += write(1, "-", 1);
+num = -num;
 }
-
-length = 0;
 
 do {
 buffer[length++] = num % 10 + '0';
 num /= 10;
 } while (num != 0);
-
-if (is_negative)
-{
-buffer[length++] = '-';
-}
 
 for (i = 0; i < length / 2; i++)
 {
@@ -73,14 +64,14 @@ buffer[length - i - 1] = temp;
 }
 
 /**
-* handle_conversion - Helper function to handle conversion specifiers.
+* handle_conversion - Helper function to handle format conversion specifiers.
 * @count: Pointer to the count of characters printed.
 * @args: Variable argument list.
-* @specifier: Conversion specifier.
+* @format: Current format specifier.
 */
-static void handle_conversion(int *count, va_list args, char specifier)
+static void handle_conversion(int *count, va_list args, const char *format)
 {
-switch (specifier)
+switch (*format)
 {
 case 'c':
 print_char(count, args);
@@ -90,10 +81,9 @@ print_string(count, args);
 break;
 case 'd':
 case 'i':
+print_integer(count, args);
+break;
 case 'u':
-case 'o':
-case 'x':
-case 'X':
 print_integer(count, args);
 break;
 case '%':
@@ -101,7 +91,7 @@ case '%':
 break;
 default:
 *count += write(1, "%", 1);
-*count += write(1, &specifier, 1);
+*count += write(1, format, 1);
 }
 }
 
@@ -123,7 +113,7 @@ while (*format)
 if (*format == '%' && *(format + 1) != '\0')
 {
 format++;
-handle_conversion(&count, args, *format);
+handle_conversion(&count, args, format);
 }
 else
 {
@@ -134,5 +124,5 @@ format++;
 
 va_end(args);
 
-return (count);
+return count;
 }
