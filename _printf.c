@@ -32,14 +32,14 @@ char *str = va_arg(args, char *);
 static void print_integer(int *count, va_list args)
 {
 int num = va_arg(args, int);
-// Assuming a reasonable buffer size for simplicity
-char buffer[12];  // Buffer for integer to string conversion
+/* Assuming a reasonable buffer size for simplicity */
+char buffer[12];  /* Buffer for integer to string conversion */
 int length = 0;
 
-// Convert integer to string
+/* Convert integer to string */
 length = sprintf(buffer, "%d", num);
 
-// Write the string to standard output
+/* Write the string to standard output */
 *count += write(1, buffer, length);
 }
 
