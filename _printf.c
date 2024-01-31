@@ -58,6 +58,35 @@ buffer[length - i - 1] = temp;
 }
 
 /**
+* print_binary - Helper function to print an unsigned integer in binary.
+* @count: Pointer to the count of characters printed.
+* @args: Variable argument list.
+*/
+static void print_binary(int *count, va_list args)
+{
+unsigned int num = va_arg(args, unsigned int);
+int binary[32];
+int i = 0;
+
+if (num == 0)
+{
+*count += write(1, "0", 1);
+return;
+}
+
+while (num > 0)
+{
+binary[i++] = num % 2;
+num /= 2;
+}
+
+for (i = i - 1; i >= 0; i--)
+{
+*count += write(1, &binary[i] + '0', 1);
+}
+}
+
+/**
 * _printf - Custom printf function.
 * @format: Format string.
 *
@@ -86,6 +115,9 @@ break;
 case 'd':
 case 'i':
 print_integer(&count, args);
+break;
+case 'b':
+print_binary(&count, args);
 break;
 case '%':
 count += write(1, "%", 1);
